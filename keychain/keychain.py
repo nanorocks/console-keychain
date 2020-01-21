@@ -9,7 +9,7 @@ Most of them are from web application.
 --------------------------------------------------
 Main propose
 Never forget profile info.
-Full crud manage on profiles.
+Full crd manage on profiles.
 -------------------------------------------------
 """
 
@@ -22,6 +22,7 @@ FILE_READ = 'r'
 FILE_WRITE = 'w+'
 FILE_APPEND = 'a+'
 
+
 def logo():
     print("""
 | | _____ _   _  ___| |__   __ _(_)_ __  
@@ -29,6 +30,7 @@ def logo():
 |   <  __/ |_| | (__| | | | (_| | | | | |
 |_|\_\___|\__, |\___|_| |_|\__,_|_|_| |_|
           |___/                          by nanorocks""")
+
 
 def menu_input():
     print("""
@@ -44,17 +46,23 @@ def menu_input():
         sys.exit()
     return value
 
-def data_file(call_menu = 1):
+
+def data_file(call_menu=1, return_type=0):
     try:
         with open(FILE_NAME, FILE_READ) as f:
             if os.stat(FILE_NAME).st_size == 0:
                 print('Storage is empty!')
                 f.close()
+                if return_type:
+                    print('Abort')
+                    sys.exit()
                 if call_menu:
                     menu()
             else:
-                print("\n",f.read())
+                print("\n", f.read())
                 f.close()
+                if return_type:
+                    return 1
                 if call_menu:
                     menu()
     except IOError:
@@ -68,11 +76,13 @@ def data_file(call_menu = 1):
 def view_profiles():
     data_file()
 
+
 def add_new_profile():
     try:
-        profile_name = input("Enter profile name ex. (FB, SLACK, EMAIL): ").strip()
-        username = input("Enter username: ").strip()
-        password = input("Enter password: ").strip()
+        profile_name = input("Enter profile name ex. (FB, SLACK, EMAIL): ")
+        username = input("Enter username: ")
+        password = input("Enter password: ")
+
     except ValueError:
         print("Invalid input")
         sys.exit()
@@ -86,17 +96,18 @@ def add_new_profile():
         print('There was an error. Storage not created.')
     f.close()
 
+
 def delete_profile():
-    data_file(0)
+    data_file(0, 1)
     profile_flag = input('Enter profile name to delete: ')
     storage = []
     with open(FILE_NAME, FILE_READ) as f:
-            for line in enumerate(f):
-                line_set = str(tuple(line)[1]).split(' ')
-                first_arg = line_set[0]
-                if str(first_arg) == str(profile_flag):
-                    continue
-                storage.append(' '.join(line_set))
+        for line in enumerate(f):
+            line_set = str(tuple(line)[1]).split(' ')
+            first_arg = line_set[0]
+            if str(first_arg) == str(profile_flag):
+                continue
+            storage.append(' '.join(line_set))
     f.close()
 
     with open(FILE_NAME, FILE_WRITE) as f:
@@ -104,8 +115,10 @@ def delete_profile():
     f.close()
     data_file()
 
+
 def abort():
     print('Abort.')
+
 
 def menu():
     number = menu_input()
@@ -119,6 +132,7 @@ def menu():
         abort()
     else:
         print('Invalid input. Abort')
+
 
 if __name__ == '__main__':
     logo()
